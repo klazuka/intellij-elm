@@ -22,14 +22,61 @@ class InlineDebugIntention : ElmAtCaretIntentionActionBase<InlineDebugIntention.
 
     override fun getFamilyName() = text
 
+    private sealed class MessageContext {
+        object DebugValue : MessageContext()
+        object DebugFunctionCall : MessageContext()
+        object DebugParentFunctionCall : MessageContext()
+        object DebugBinaryOpt : MessageContext()
+        object DebugPipeline : MessageContext()
+        object DebugCase : MessageContext()
+        object DebugExpression : MessageContext()
+    }
+
     override fun findApplicableContext(project: Project, editor: Editor, element: PsiElement): Context? {
+        val contexts = getContext(project, editor, element)
+
+        if (contexts != null) {
+            val firstPartOfDescription = "Debug.log "
+            val (context, messageContext) = contexts
+            when (messageContext) {
+                is MessageContext.DebugValue -> {
+                    super.setText(firstPartOfDescription + "this value")
+                }
+                is MessageContext.DebugFunctionCall -> {
+                    super.setText(firstPartOfDescription + "output of function")
+                }
+                is MessageContext.DebugParentFunctionCall -> {
+                    super.setText(firstPartOfDescription + "output of parent function")
+                }
+                is MessageContext.DebugBinaryOpt -> {
+                    super.setText(firstPartOfDescription + "expression")
+                }
+                MessageContext.DebugPipeline -> {
+                    super.setText(firstPartOfDescription + "output of pipeline")
+                }
+                is MessageContext.DebugCase -> {
+                    super.setText(firstPartOfDescription + "output of case statement")
+                }
+                is MessageContext.DebugExpression -> {
+                    super.setText(firstPartOfDescription + "expression")
+                }
+            }
+
+            return context
+        } else {
+            return null
+        }
+    }
+
+
+    private fun getContext(project: Project, editor: Editor, element: PsiElement): Pair<Context, MessageContext>? {
         element.ancestors.forEach { currentExpr ->
             when (currentExpr) {
                 is ElmConstantTag -> {
                     // A constant is unlikely to be interesting to debug.
                     // It is more likely the context the constant is used in, that is interesting.
                     currentExpr.parentOfType<ElmBinOpExpr>()
-                            ?.let { parentBinOpExpr -> return Context(parentBinOpExpr) }
+                            ?.let { parentBinOpExpr -> return Pair(Context(parentBinOpExpr), MessageContext.DebugBinaryOpt) }
                     return null
                 }
                 is ElmParenthesizedExpr -> {
@@ -38,7 +85,7 @@ class InlineDebugIntention : ElmAtCaretIntentionActionBase<InlineDebugIntention.
                     return if (parentCallExpr != null && isDebugCall(parentCallExpr) && parentCallExpr.arguments.contains(currentExpr)) {
                         null
                     } else {
-                        Context(currentExpr)
+                        Pair(Context(currentExpr), MessageContext.DebugExpression)
                     }
                 }
                 is ElmValueExpr -> {
@@ -59,7 +106,7 @@ class InlineDebugIntention : ElmAtCaretIntentionActionBase<InlineDebugIntention.
                         } else if (parentCallExpr.target == currentExpr) {
                             // If the intention is invoked on a non-debug function, it is likely the output of that function,
                             // that the user is interested in.
-                            return Context(parentCallExpr)
+                            return Pair(Context(parentCallExpr), MessageContext.DebugFunctionCall)
                         }
                     }
 
@@ -73,27 +120,33 @@ class InlineDebugIntention : ElmAtCaretIntentionActionBase<InlineDebugIntention.
                             }
                             // A separate intention is intended to allow users to insert log statements inside the pipeline.
                             binOpParent.asPipeline() != null -> {
-                                Context(binOpParent)
+                                Pair(Context(binOpParent), MessageContext.DebugPipeline)
                             }
                             else -> {
-                                Context(currentExpr)
+                                Pair(Context(currentExpr), MessageContext.DebugValue)
                             }
                         }
                     } else {
-                        Context(currentExpr)
+                        Pair(Context(currentExpr), MessageContext.DebugValue)
                     }
                 }
                 is ElmCaseOfExpr -> {
-                    return Context(currentExpr)
+                    return Pair(Context(currentExpr), MessageContext.DebugCase)
                 }
                 is ElmAtomTag -> {
-                    return Context(currentExpr)
+                    return Pair(Context(currentExpr), MessageContext.DebugValue)
                 }
                 is ElmBinOpExpr -> {
-                    return if (isFunComposition(currentExpr)) {
-                        null
-                    } else {
-                        Context(currentExpr)
+                    return when {
+                        isFunComposition(currentExpr) -> {
+                            null
+                        }
+                        currentExpr.asPipeline() != null -> {
+                            Pair(Context(currentExpr), MessageContext.DebugPipeline)
+                        }
+                        else -> {
+                            Pair(Context(currentExpr), MessageContext.DebugBinaryOpt)
+                        }
                     }
                 }
             }
