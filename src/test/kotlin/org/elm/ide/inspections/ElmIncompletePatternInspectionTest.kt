@@ -90,6 +90,137 @@ foo it =
             --EOL
 """)
 
+//    fun `test no existing branch in parenthesis`() = checkFixByText("Add missing case branches", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (<error>case{-caret-}</error> it of<error>)</error>
+//""", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (case it of
+//        Bar ->
+//            --EOL
+//
+//        Baz ->
+//            --EOL
+//
+//        Qux ->
+//            --EOL
+//    )
+//""")
+
+//    fun `test one existing branch in parenthesis`() = checkFixByText("Add missing case branches", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (<error>case{-caret-}</error> it of
+//        Baz ->
+//            ()<error>)</error>
+//""", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (case it of
+//        Baz ->
+//            ()
+//
+//        Bar ->
+//            --EOL
+//
+//        Qux ->
+//            --EOL
+//    )
+//""")
+
+    fun `test one existing branch in parenthesis on new line`() = checkFixByText("Add missing case branches", """
+type Foo = Bar | Baz | Qux
+
+foo : Foo -> ()
+foo it =
+    (<error>case{-caret-}</error> it of
+        Baz ->
+            ()
+    )
+""", """
+type Foo = Bar | Baz | Qux
+
+foo : Foo -> ()
+foo it =
+    (case it of
+        Baz ->
+            ()
+
+        Bar ->
+            --EOL
+
+        Qux ->
+            --EOL
+    )
+""")
+
+//    fun `test two existing branches in parenthesis`() = checkFixByText("Add missing case branches", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (<error>case{-caret-}</error> it of
+//        Baz ->
+//            ()
+//
+//        Qux ->
+//            ()<error>)</error>
+//""", """
+//type Foo = Bar | Baz | Qux
+//
+//foo : Foo -> ()
+//foo it =
+//    (case it of
+//        Baz ->
+//            ()
+//
+//        Qux ->
+//            ()
+//
+//        Bar ->
+//            --EOL
+//    )
+//""")
+
+    fun `test two existing branches in parenthesis on new line`() = checkFixByText("Add missing case branches", """
+type Foo = Bar | Baz | Qux
+
+foo : Foo -> ()
+foo it =
+    (<error>case{-caret-}</error> it of
+        Baz ->
+            ()
+
+        Qux ->
+            ()
+    )
+""", """
+type Foo = Bar | Baz | Qux
+
+foo : Foo -> ()
+foo it =
+    (case it of
+        Baz ->
+            ()
+
+        Qux ->
+            ()
+
+        Bar ->
+            --EOL
+    )
+""")
+
     fun `test params`() = checkFixByText("Add missing case branches", """
 type Foo = Foo
 type alias BarBaz = Foo
