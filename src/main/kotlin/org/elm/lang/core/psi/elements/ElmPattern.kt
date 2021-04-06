@@ -15,6 +15,15 @@ class ElmPattern(node: ASTNode) : ElmPsiElementImpl(node), ElmFunctionParamTag, 
     val child: ElmPatternChildTag
         get() = findNotNullChildByClass(ElmPatternChildTag::class.java)
 
+    val unwrapped: ElmPatternChildTag
+        get() {
+            var nextChild = child
+            while (nextChild is ElmPattern) {
+                nextChild = nextChild.child
+            }
+            return nextChild
+        }
+
     /**
      * The name after the `as` that this pattern is bound to.
      *
