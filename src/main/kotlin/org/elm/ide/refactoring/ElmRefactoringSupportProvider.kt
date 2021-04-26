@@ -15,4 +15,8 @@ class ElmRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun getIntroduceVariableHandler(): RefactoringActionHandler? {
         return ElmIntroduceVariableHandler()
     }
+
+    override fun getExtractMethodHandler(): RefactoringActionHandler? {
+        return ElmExtractMethodHandler()
+    }
 }

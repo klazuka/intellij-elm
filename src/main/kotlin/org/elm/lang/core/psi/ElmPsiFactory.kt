@@ -246,6 +246,16 @@ class ElmPsiFactory(private val project: Project) {
                 ?: error("Failed to create let/in wrapper")
     }
 
+    fun createValue(name: String, bodyText: String, parameters: Set<String> = emptySet()): ElmValueDeclaration {
+        val paramsString = if (parameters.isEmpty()) "" else parameters.joinToString(separator = " ", postfix = " ")
+
+        val code = """
+        #${name} ${paramsString}=
+        #   ${bodyText}
+        """.trimMargin("#")
+        return createFromText(code) ?: error("Failed to create value declaration")
+    }
+
     fun createNewline(): PsiElement = createWhitespace("\n")
 
     fun createWhitespace(ws: String): PsiElement =
