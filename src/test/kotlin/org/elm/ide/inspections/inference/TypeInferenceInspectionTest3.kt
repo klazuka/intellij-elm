@@ -444,7 +444,7 @@ foo a b = a
 
 main : (number, number) -> (number, number) -> ()
 main a b =
-    <error descr="Type mismatch.Required: ()Found: (number, number)">foo a b</error>
+    <error descr="Type mismatch.Required: ()Found: ( number, number )">foo a b</error>
 """)
 
     fun `test constraint comparable tuple float`() = checkByText("""
@@ -453,7 +453,7 @@ foo a b = a
 
 main : ()
 main =
-    <error descr="Type mismatch.Required: ()Found: (Float, Float)">foo (1.1, 2.2) (3.3, 4.4)</error>
+    <error descr="Type mismatch.Required: ()Found: ( Float, Float )">foo (1.1, 2.2) (3.3, 4.4)</error>
 """)
 
     fun `test constraint comparable appendable mismatch`() = checkByText("""
@@ -471,7 +471,7 @@ foo a b = a
 
 main : ()
 main =
-    foo ("", "") <error descr="Type mismatch.Required: (String, String)Found: (String, Float)">("", 1.1)</error>
+    foo ("", "") <error descr="Type mismatch.Required: ( String, String )Found: ( String, Float )">("", 1.1)</error>
 """)
 
     fun `test constraint comparable comparable`() = checkByText("""
@@ -665,7 +665,7 @@ foo a = ((), "", a + 1)
 
 main : ()
 main =
-    <error descr="Type mismatch.Required: ()Found: number → ((), String, number)">foo</error>
+    <error descr="Type mismatch.Required: ()Found: number → ( (), String, number )">foo</error>
 """)
 
     fun `test using constrained var in let`() = checkByText("""
@@ -738,7 +738,7 @@ main a =
             (x, ()) -> x
             _ -> ""
     in
-        ( foo <error descr="Type mismatch.Required: ()Found: (String, ())">a</error>
+        ( foo <error descr="Type mismatch.Required: ()Found: ( String, () )">a</error>
         , foo <error descr="Type mismatch.Required: ()Found: String">b</error>
         )
 """)
@@ -980,7 +980,7 @@ type Baz c d = Baz { f4 : Foo d -> Foo d }
 
 main : Baz (e -> ()) e -> Bar e
 main (Baz baz) =
-    Bar <error descr="Type mismatch.Required: { f2 : Foo ((), b) }Found: { f2 : Foo e }Mismatched fields: &nbsp;&nbsp;Field f2:&nbsp;&nbsp;&nbsp;&nbsp;Required: Foo ((), b)&nbsp;&nbsp;&nbsp;&nbsp;Found: Foo e">{ f2 = baz.f4 Foo }</error>
+    Bar <error descr="Type mismatch.Required: { f2 : Foo ( (), b ) }Found: { f2 : Foo e }Mismatched fields: &nbsp;&nbsp;Field f2:&nbsp;&nbsp;&nbsp;&nbsp;Required: Foo ( (), b )&nbsp;&nbsp;&nbsp;&nbsp;Found: Foo e">{ f2 = baz.f4 Foo }</error>
 """)
 
     fun `test flex arg to rigid param 2`() = checkByText("""
@@ -991,7 +991,7 @@ type Baz c d = Baz { f3 : c , f4 : Foo d -> Foo d }
 main : Baz (e -> ()) e -> Bar e
 main (Baz baz) =
     Bar
-        <error descr="Type mismatch.Required: { f1 : e → (), f2 : Foo ((), e) }Found: { f1 : e → (), f2 : Foo e }Mismatched fields: &nbsp;&nbsp;Field f2:&nbsp;&nbsp;&nbsp;&nbsp;Required: Foo ((), e)&nbsp;&nbsp;&nbsp;&nbsp;Found: Foo e">{ f1 = baz.f3
+        <error descr="Type mismatch.Required: { f1 : e → (), f2 : Foo ( (), e ) }Found: { f1 : e → (), f2 : Foo e }Mismatched fields: &nbsp;&nbsp;Field f2:&nbsp;&nbsp;&nbsp;&nbsp;Required: Foo ( (), e )&nbsp;&nbsp;&nbsp;&nbsp;Found: Foo e">{ f1 = baz.f3
         , f2 = baz.f4 Foo
         }</error>
 """)
