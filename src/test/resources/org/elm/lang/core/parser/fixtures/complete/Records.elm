@@ -20,3 +20,11 @@ makePair { x, y } =
 
 input =  { x = \() -> () }
 valueRef = { foo = input.x (), bar = () }
+
+emptyRecordFn {} = 1
+
+emptyRecordInCaseOf =
+    case {} of
+        {} -> 1
+        { } -> 1
+        _ -> 1
