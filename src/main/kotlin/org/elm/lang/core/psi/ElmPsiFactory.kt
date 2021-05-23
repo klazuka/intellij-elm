@@ -222,7 +222,7 @@ class ElmPsiFactory(private val project: Project) {
 
     fun createCaseOfBranches(existingIndent: String, indent: String, patterns: List<String>): List<ElmCaseOfBranch> {
         val text = patterns.joinToString("\n\n$existingIndent$indent", prefix = "foo = case 1 of\n\n$existingIndent$indent") {
-            "$it ->\n$existingIndent$indent$indent"
+            "$it ->\n$existingIndent$indent$indent()"
         }
         return createFromText<ElmValueDeclaration>(text)
                 ?.descendantOfType<ElmCaseOfExpr>()?.branches
