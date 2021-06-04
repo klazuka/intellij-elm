@@ -3,6 +3,7 @@ package org.elm.lang.core.completion
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.ELM_IDENTIFIERS
 import org.elm.lang.core.psi.ElmFieldAccessTargetTag
 import org.elm.lang.core.psi.elementType
@@ -56,5 +57,6 @@ object ElmRecordFieldSuggestor : Suggestor {
 
 private fun CompletionResultSet.add(str: String, field: Ty) {
     addElement(LookupElementBuilder.create(str)
+            .withIcon(ElmIcons.VALUE)
             .withTypeText(field.renderedText()))
 }

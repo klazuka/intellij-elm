@@ -10,14 +10,15 @@ import org.elm.lang.core.psi.elements.ElmValueDeclaration
 
 class ExpressionScope(private val element: PsiElement) {
     /** Return a lazy sequence of all names visible to the [element] */
-    fun getVisibleValues(): Sequence<ElmNamedElement> {
+    fun getVisibleValues(includeTopLevel: Boolean = true): Sequence<ElmNamedElement> {
         val declAncestors = mutableListOf<ElmValueDeclaration>()
         return element.ancestorsStrict
                 .takeUntil { it is ElmFile }
                 .flatMap {
                     when (it) {
                         is ElmFile -> {
-                            ModuleScope.getVisibleValues(it).all.asSequence()
+                            if (includeTopLevel) ModuleScope.getVisibleValues(it).all.asSequence()
+                            else emptySequence()
                         }
                         is ElmValueDeclaration -> {
                             declAncestors += it

@@ -41,7 +41,7 @@ class ElmLibrary(
             null
 
     override fun getIcon(unused: Boolean): Icon? =
-            ElmIcons.FILE
+            ElmIcons.PACKAGE
 
     override fun getPresentableText(): String? =
             name

@@ -14,7 +14,7 @@ class ElmProjectTemplatesFactory : ProjectTemplatesFactory() {
 
     override fun getGroupIcon(group: String?): Icon =
             when (group) {
-                elmGroupName -> ElmIcons.COLORFUL
+                elmGroupName -> ElmIcons.LOGO
                 else -> super.getGroupIcon(group)
             }
 

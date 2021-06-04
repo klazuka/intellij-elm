@@ -48,7 +48,7 @@ class ElmWorkspacePanel(private val project: Project) : SimpleToolWindowPanel(tr
         cellRenderer = object : ColoredListCellRenderer<ElmProject>() {
             override fun customizeCellRenderer(list: JList<out ElmProject>, value: ElmProject, index: Int,
                                                selected: Boolean, hasFocus: Boolean) {
-                icon = ElmIcons.COLORFUL
+                icon = ElmIcons.LOGO
                 val attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES
                 append(value.manifestPath.toString(), attributes)
             }

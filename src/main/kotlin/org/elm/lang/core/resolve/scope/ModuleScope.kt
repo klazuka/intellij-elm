@@ -219,9 +219,9 @@ object ModuleScope {
         }
     }
 
-    private data class ExposedElement(val fromWildcard: Boolean, val element: ElmNamedElement)
+    data class ExposedElement(val fromWildcard: Boolean, val element: ElmNamedElement)
 
-    private fun getVisibleImportValues(importClause: ElmImportClause): List<ExposedElement> {
+    fun getVisibleImportValues(importClause: ElmImportClause): List<ExposedElement> {
         val allExposedValues = ImportScope.fromImportDecl(importClause)
                 ?.getExposedValues()?.elements
                 ?: return emptyList()
@@ -288,7 +288,7 @@ object ModuleScope {
     }
 
 
-    private fun getVisibleImportTypes(importClause: ElmImportClause): List<ElmNamedElement> {
+    fun getVisibleImportTypes(importClause: ElmImportClause): List<ElmNamedElement> {
         val allExposedTypes = ImportScope.fromImportDecl(importClause)
                 ?.getExposedTypes()?.elements
                 ?: return emptyList()
@@ -335,7 +335,7 @@ object ModuleScope {
 
     }
 
-    private fun getVisibleImportConstructors(importClause: ElmImportClause): List<ElmNamedElement> {
+    fun getVisibleImportConstructors(importClause: ElmImportClause): List<ElmNamedElement> {
         val allExposedConstructors = ImportScope.fromImportDecl(importClause)
                 ?.getExposedConstructors()?.elements
                 ?: return emptyList()

@@ -146,7 +146,7 @@ external DotWithoutTrailingWhitespace ::= parseDotWithoutTrailingWhitespace
 external DotWithoutLeadingWhitespace ::= parseDotWithoutLeadingWhitespace
 external MinusWithoutTrailingWhitespace ::= parseMinusWithoutTrailingWhitespace
 
-UpperCaseQID ::= UPPER_CASE_IDENTIFIER (DotWithoutWhitespace UPPER_CASE_IDENTIFIER)*
+UpperCaseQID ::= UPPER_CASE_IDENTIFIER (DotWithoutWhitespace (UPPER_CASE_IDENTIFIER | LOWER_CASE_IDENTIFIER))*
 ValueQID ::= (UPPER_CASE_IDENTIFIER DotWithoutWhitespace)* LOWER_CASE_IDENTIFIER
 FieldAccessorFunctionExpr ::= DotWithoutTrailingWhitespace LOWER_CASE_IDENTIFIER
 

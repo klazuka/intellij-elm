@@ -6,6 +6,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.psi.ElmTypes.LOWER_CASE_IDENTIFIER
 import org.elm.lang.core.stubs.ElmFunctionDeclarationLeftStub
@@ -35,6 +36,8 @@ class ElmFunctionDeclarationLeft : ElmStubbedNamedElementImpl<ElmFunctionDeclara
     constructor(stub: ElmFunctionDeclarationLeftStub, stubType: IStubElementType<*, *>) :
             super(stub, stubType, IdentifierCase.LOWER)
 
+    override fun getIcon(flags: Int) =
+        ElmIcons.FUNCTION
 
     /**
      * The name given to the function/value

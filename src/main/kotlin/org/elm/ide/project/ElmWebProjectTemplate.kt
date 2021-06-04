@@ -25,7 +25,7 @@ private val log = logger<ElmWebProjectTemplate>()
 
 class ElmWebProjectTemplate : WebProjectTemplate<Any>(), CustomStepProjectGenerator<Any> {
 
-    override fun getIcon() = ElmIcons.COLORFUL
+    override fun getIcon() = ElmIcons.LOGO
     override fun getName() = "Elm Application"
     override fun getDescription() = "Create a basic Elm application project"
 

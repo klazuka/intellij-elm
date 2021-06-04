@@ -3,6 +3,7 @@ package org.elm.lang.core.psi.elements
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.stubs.ElmInfixDeclarationStub
 
@@ -23,6 +24,8 @@ class ElmInfixDeclaration : ElmStubbedNamedElementImpl<ElmInfixDeclarationStub>,
     constructor(stub: ElmInfixDeclarationStub, stubType: IStubElementType<*, *>) :
             super(stub, stubType, IdentifierCase.OPERATOR)
 
+    override fun getIcon(flags: Int) =
+        ElmIcons.FUNCTION
 
     val operatorIdentifier: PsiElement
         get() = findNotNullChildByType(ElmTypes.OPERATOR_IDENTIFIER)

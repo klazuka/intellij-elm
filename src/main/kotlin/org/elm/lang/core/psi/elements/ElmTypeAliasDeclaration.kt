@@ -24,10 +24,8 @@ class ElmTypeAliasDeclaration : ElmStubbedNamedElementImpl<ElmTypeAliasDeclarati
     constructor(stub: ElmTypeAliasDeclarationStub, stubType: IStubElementType<*, *>) :
             super(stub, stubType, IdentifierCase.UPPER)
 
-
     override fun getIcon(flags: Int) =
             ElmIcons.TYPE_ALIAS
-
 
     /** The new name (alias) which will hereafter refer to [typeExpression] */
     val upperCaseIdentifier: PsiElement

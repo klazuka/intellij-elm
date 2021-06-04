@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.ElmTypes.*
 import org.elm.lang.core.psi.elementType
 import org.elm.lang.core.psi.elements.*
@@ -99,7 +100,7 @@ object ElmKeywordSuggestor : Suggestor {
     }
 
     private fun CompletionResultSet.add(keyword: String) {
-        var builder = LookupElementBuilder.create(keyword)
+        var builder = LookupElementBuilder.create(keyword).withIcon(ElmIcons.KEYWORD)
         builder = addInsertionHandler(keyword, builder)
         addElement(builder)
     }

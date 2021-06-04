@@ -4,10 +4,12 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.resolve.ElmReferenceElement
 import org.elm.lang.core.resolve.reference.ElmReference
 import org.elm.lang.core.resolve.reference.RecordFieldReference
+import javax.swing.Icon
 
 
 /**
@@ -19,6 +21,10 @@ import org.elm.lang.core.resolve.reference.RecordFieldReference
 class ElmLowerPattern(node: ASTNode) : ElmNamedElementImpl(node, IdentifierCase.LOWER),
         ElmReferenceElement, ElmNameDeclarationPatternTag,
         ElmFunctionParamTag, ElmPatternChildTag, ElmUnionPatternChildTag {
+
+    override fun getIcon(flags: Int): Icon {
+        return ElmIcons.VALUE
+    }
 
     val identifier: PsiElement
         get() = findNotNullChildByType(ElmTypes.LOWER_CASE_IDENTIFIER)

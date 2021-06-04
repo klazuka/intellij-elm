@@ -5,6 +5,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.elm.ide.icons.ElmIcons
 import org.elm.ide.presentation.getPresentation
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.psi.ElmTypes.DOC_COMMENT
@@ -29,6 +30,8 @@ class ElmModuleDeclaration : ElmStubbedElement<ElmModuleDeclarationStub>, ElmNam
     constructor(stub: ElmModuleDeclarationStub, stubType: IStubElementType<*, *>) :
             super(stub, stubType)
 
+    override fun getIcon(flags: Int) =
+        ElmIcons.MODULE
 
     /**
      * The fully-qualified name of the module

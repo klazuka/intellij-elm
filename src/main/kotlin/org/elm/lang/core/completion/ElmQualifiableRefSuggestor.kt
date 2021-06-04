@@ -2,12 +2,20 @@ package org.elm.lang.core.completion
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.psi.elements.*
-import org.elm.lang.core.resolve.scope.*
+import org.elm.lang.core.resolve.scope.ExpressionScope
+import org.elm.lang.core.resolve.scope.GlobalScope
+import org.elm.lang.core.resolve.scope.ImportScope
+import org.elm.lang.core.resolve.scope.ModuleScope
 import org.elm.lang.core.stubs.index.ElmModulesIndex
+import org.elm.lang.core.types.findTy
+import org.elm.lang.core.types.renderedText
 
 
 /**
@@ -24,85 +32,202 @@ object ElmQualifiableRefSuggestor : Suggestor {
         val parent = pos.parent
         val grandParent = pos.parent?.parent
         val file = pos.containingFile as ElmFile
+        val fileModule = file.getModuleDecl() ?: return
+
+        val prefix = parent.text.substring(0, parameters.offset - parent.textRange.startOffset)
+        val prefixedResult = result.withPrefixMatcher(prefix)
 
         if (grandParent is ElmValueExpr && grandParent.prevSibling is ElmNumberConstantExpr) {
-            /*
-            Ignore this case in order to prevent IntelliJ from suggesting completions
-            when the caret is immediately after a number.
-            */
-        } else if (pos.elementType in ELM_IDENTIFIERS && parent is ElmQID) {
-            val qualifierPrefix = parent.qualifierPrefix
-            suggestQualifiers(qualifierPrefix, file, result)
+            // Ignore this case in order to prevent IntelliJ from suggesting completions
+            // when the caret is immediately after a number.
+            return
+        }
+
+        if (pos.elementType in ELM_IDENTIFIERS) {
+            val fileImports =
+                file.getImportClauses() +
+                        (GlobalScope.forElmFile(file)?.getImportClauses() ?: emptyList())
 
             when (grandParent) {
                 is ElmValueExpr -> {
-                    if (qualifierPrefix.isEmpty()) {
-                        ExpressionScope(parent).getVisibleValues().forEach { result.add(it) }
-                        ModuleScope.getVisibleConstructors(file).all.forEach { result.add(it) }
-                        GlobalScope.builtInValues.forEach { result.add(it) }
-                    } else {
-                        /* TODO Make a distinction between completion results that are already imported
-                                and those that are not. When selecting a completion that is not yet imported,
-                                the import declaration should be automatically added.
-                        */
-                        val importScopes = QualifiedImportScope(qualifierPrefix, file, importsOnly = false)
-                        importScopes.getExposedValues().forEach { result.add(it) }
-                        importScopes.getExposedConstructors().forEach { result.add(it) }
+                    ElmModulesIndex.getAll(file).plus(fileModule).forEach { module ->
+                        prefixedResult.addModule(
+                            pos,
+                            module,
+                            fileImports.firstOrNull { it.referenceName == module.name },
+                            {
+                                if (module.elmFile == file) (
+                                        (ModuleScope.getDeclaredValues(module.elmFile).array
+                                                + ModuleScope.getDeclaredConstructors(module.elmFile).array
+                                                + ExpressionScope(parent).getVisibleValues(false).toList().toTypedArray()))
+                                else
+                                    (ImportScope(module.elmFile).getExposedValues().elements
+                                            + ImportScope(module.elmFile).getExposedConstructors().elements)
+                            },
+                            { import: ElmImportClause ->
+                                (ModuleScope.getVisibleImportValues(import).map { it.element }
+                                        + ModuleScope.getVisibleImportConstructors(import))
+                            }
+                        )
                     }
                 }
-                is ElmUnionPattern -> {
-                    if (qualifierPrefix.isEmpty()) {
-                        ModuleScope.getVisibleConstructors(file).all
-                                .filterIsInstance<ElmUnionVariant>()
-                                .forEach { result.add(it) }
-                    } else {
-                        QualifiedImportScope(qualifierPrefix, file, importsOnly = false)
-                                .getExposedConstructors()
-                                .filterIsInstance<ElmUnionVariant>()
-                                .forEach { result.add(it) }
+                is ElmPattern, is ElmUnionPattern -> {
+                    ElmModulesIndex.getAll(file).plus(fileModule).forEach { module ->
+                        prefixedResult.addModule(
+                            pos,
+                            module,
+                            fileImports.firstOrNull { it.referenceName == module.name },
+                            {
+                                (if (module.elmFile == file) ModuleScope.getDeclaredConstructors(file).array
+                                else (ImportScope(module.elmFile).getExposedConstructors().elements))
+                                    .filterIsInstance<ElmUnionVariant>().toTypedArray()
+                            },
+                            { import: ElmImportClause ->
+                                ModuleScope.getVisibleImportConstructors(import)
+                            }
+                        )
                     }
                 }
-                is ElmTypeRef -> {
-                    if (qualifierPrefix.isEmpty()) {
-                        ModuleScope.getVisibleTypes(file).all.forEach { result.add(it) }
-                        GlobalScope.builtInTypes.forEach { result.add(it) }
-                    } else {
-                        QualifiedImportScope(qualifierPrefix, file, importsOnly = false)
-                                .getExposedTypes()
-                                .forEach { result.add(it) }
+                is ElmTypeRef, is ElmTypeExpression -> {
+                    ElmModulesIndex.getAll(file).plus(fileModule).forEach { module ->
+                        prefixedResult.addModule(
+                            pos,
+                            module,
+                            fileImports.firstOrNull { it.referenceName == module.name },
+                            {
+                                if (module.elmFile == file) ModuleScope.getDeclaredTypes(file).array
+                                else ImportScope(module.elmFile).getExposedTypes().elements
+                            },
+                            { import: ElmImportClause ->
+                                ModuleScope.getVisibleImportTypes(import)
+                            }
+                        )
+                    }
+
+                    // https://github.com/elm/core/issues/1037
+                    LookupElementBuilder
+                        .create("List")
+                        .withIcon(ElmIcons.UNION_TYPE)
+                        .withTypeText("List")
+                        .let {
+                            PrioritizedLookupElement.withPriority(it, 1.0)
+                        }.let {
+                            prefixedResult.addElement(it)
+                        }
+                }
+            }
+        }
+    }
+}
+
+private fun CompletionResultSet.addModule(
+    position: PsiElement,
+    module: ElmModuleDeclaration,
+    moduleImport: ElmImportClause?,
+    listModuleNames: (Unit) -> Array<ElmNamedElement>,
+    getExposedNames: (ElmImportClause) -> List<ElmNamedElement>
+) {
+    when {
+        // current module
+        position.containingFile == module.elmFile -> {
+            listModuleNames(Unit).forEach {
+                this.addModuleElement(module, it, null)
+            }
+        }
+        // not imported
+        moduleImport == null -> {
+            this.addModuleQualifier(module)
+        }
+        // imported
+        else -> {
+            val exposedNames = getExposedNames(moduleImport)
+
+            listModuleNames(Unit).forEach {
+                when {
+                    // imported via expose all
+                    moduleImport.exposesAll -> {
+                        this.addModuleElement(module, it, null)
+                    }
+                    // imported via expose
+                    exposedNames.contains(it) -> {
+                        this.addModuleElement(module, it, null)
+                    }
+                    // imported via alias
+                    moduleImport.asClause != null -> {
+                        this.addModuleElement(module, it, moduleImport.asClause!!.name)
+                    }
+                    // imported
+                    else -> {
+                        this.addModuleElement(module, it, module.name)
                     }
                 }
             }
         }
     }
+}
 
-    private fun suggestQualifiers(qualifierPrefix: String, file: ElmFile, result: CompletionResultSet) {
-        // Get all modules exposed to this Elm project, regardless of whether they have been imported,
-        // and suggest them hierarchically based on the dotted module name.
-        //
-        // EXAMPLE:
-        // assume that the Elm project has a dependency on elm/json which provides Json.Decode and Json.Encode modules
-        // if the input text is "Jso" then we would suggest "Json"
-        // and if the input text is "Json." then we might suggest "Decode" and "Encode"
-        ElmModulesIndex.getAll(file).asSequence()
-                .filter { it.name.startsWith(qualifierPrefix) && it.name != qualifierPrefix }
-                .map { it.name.removePrefix("$qualifierPrefix.").substringBefore('.') }
-                .forEach { result.add(it) }
+private fun CompletionResultSet.addModuleQualifier(
+    module: ElmModuleDeclaration
+) {
+    val importQualifier = module.name.split(".").last()
 
-        // Aliases are forbidden from having dots in the name. So if the qualifier prefix is empty, then
-        // we are in a state where aliases can (and should) be suggested.
-        if (qualifierPrefix.isEmpty()) {
-            ModuleScope.getAliasDecls(file).forEach { result.add(it) }
+    LookupElementBuilder
+        .createWithSmartPointer(importQualifier, module)
+        .withIcon(module.getIcon(0))
+        .withLookupString(module.name)
+        .withPresentableText(module.name)
+        .withInsertHandler { context, _ ->
+            val offset = when {
+                (context.file as ElmFile).getImportClauses().isEmpty() ->
+                    (context.file.node.findChildByType(ELM_TOP_LEVEL_DECLARATIONS)!!).textRange.startOffset
+                else ->
+                    (context.file as ElmFile).getImportClauses().first().textRange.startOffset
+            }
+            val exposing =
+                if (ImportScope(module.elmFile).getExposedTypes()[importQualifier] != null)
+                    " exposing ($importQualifier)"
+                else ""
+            val import =
+                if (importQualifier == module.name) "import ${module.name}$exposing\n"
+                else ("import ${module.name} as $importQualifier$exposing\n")
+            context.document.insertString(offset, import)
+        }.let {
+            PrioritizedLookupElement.withPriority(it, 0.0)
+        }.let {
+            addElement(it)
         }
-    }
-
 }
 
-private fun CompletionResultSet.add(str: String) {
-    addElement(LookupElementBuilder.create(str))
-}
+private fun CompletionResultSet.addModuleElement(
+    module: ElmModuleDeclaration,
+    element: ElmNamedElement,
+    importQualifier: String?
+) {
+    if (element.name == null) return
 
-private fun CompletionResultSet.add(element: ElmNamedElement) {
-    addElement(LookupElementBuilder.create(element))
-}
+    val ty = element.findTy()
 
+    LookupElementBuilder
+        .createWithSmartPointer(
+            if (importQualifier != null) importQualifier + "." + element.name!!
+            else element.name!!,
+            element
+        )
+        .withIcon(element.getIcon(0))
+        .let {
+            val annotation = ty?.renderedText(linkify = false, withModule = false, elmFile = null)
+            if (annotation != null) it.withTailText(" : $annotation")
+            else it
+        }
+        .withTypeText(module.name)
+        .let {
+            val operatorName = (element as? ElmInfixDeclaration)?.funcRef?.referenceName
+            if (operatorName != null) it.withLookupString(operatorName)
+            else it
+        }
+        .let {
+            PrioritizedLookupElement.withPriority(it, 1.0)
+        }.let {
+            addElement(it)
+        }
+}

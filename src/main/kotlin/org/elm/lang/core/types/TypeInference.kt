@@ -32,6 +32,9 @@ fun ElmPsiElement.findTy(): Ty? {
             val decl = parentOfType<ElmValueDeclaration>() ?: return null
             return findInference()?.let { it.expressionTypes[decl] ?: it.ty }
         }
+        is ElmInfixDeclaration -> {
+            return funcRef?.reference?.resolve()?.findTy()
+        }
         is ElmValueDeclaration -> {
             findInference()?.let { it.expressionTypes[this] ?: it.ty }
         }

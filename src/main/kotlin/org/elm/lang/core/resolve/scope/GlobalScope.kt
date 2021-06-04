@@ -1,12 +1,16 @@
 package org.elm.lang.core.resolve.scope
 
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.ParameterizedCachedValue
+import org.elm.lang.core.ElmFileType
 import org.elm.lang.core.lookup.ClientLocation
 import org.elm.lang.core.psi.ElmFile
 import org.elm.lang.core.psi.ElmNamedElement
+import org.elm.lang.core.psi.descendantsOfType
+import org.elm.lang.core.psi.elements.ElmImportClause
 import org.elm.lang.core.psi.elements.ElmModuleDeclaration
 import org.elm.lang.core.psi.globalModificationTracker
 import org.elm.lang.core.stubs.index.ElmModulesIndex
@@ -147,5 +151,33 @@ class GlobalScope private constructor(private val clientFile: ElmFile) {
         return CachedValuesManager.getManager(clientFile.project).getParameterizedCachedValue(elmProject, VISIBLE_CTORS_KEY, {
             CachedValueProvider.Result.create(produceVisibleConstructors(it), it.globalModificationTracker)
         }, /*trackValue*/ false, /*parameter*/ clientFile)
+    }
+
+    fun getImportClauses(): List<ElmImportClause> {
+        val fromString = { code: String ->
+            (PsiFileFactory.getInstance(clientFile.project)
+                .createFileFromText(code, clientFile.originalFile)
+                ?.descendantsOfType<ElmImportClause>()
+                ?.toList() ?: emptyList())
+                .map {
+                    it.elmFile.originalFile = clientFile.originalFile
+                    it
+                }
+        }
+
+        // https://package.elm-lang.org/packages/elm/core/latest/
+        return fromString(
+            "import Basics exposing (..)\n"
+                    + "import List exposing (List, (::))\n"
+                    + "import Maybe exposing (Maybe(..))\n"
+                    + "import Result exposing (Result(..))\n"
+                    + "import String exposing (String)\n"
+                    + "import Char exposing (Char)\n"
+                    + "import Tuple\n"
+                    + "import Debug\n"
+                    + "import Platform exposing (Program)\n"
+                    + "import Platform.Cmd as Cmd exposing (Cmd)\n"
+                    + "import Platform.Sub as Sub exposing (Sub)"
+        )
     }
 }

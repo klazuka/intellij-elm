@@ -3,6 +3,7 @@ package org.elm.lang.core.completion
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.elements.ElmField
 import org.elm.lang.core.psi.elements.ElmRecordExpr
 import org.elm.lang.core.psi.outermostDeclaration
@@ -34,6 +35,7 @@ object ElmRecordExprSuggestor : Suggestor {
 
 private fun CompletionResultSet.add(needsEquals: Boolean, str: String, field: Ty) {
     addElement(LookupElementBuilder.create(str)
+            .withIcon(ElmIcons.VALUE)
             .withTypeText(field.renderedText())
             .withInsertHandler { context, _ ->
                 if (needsEquals) {

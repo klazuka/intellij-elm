@@ -3,6 +3,7 @@ package org.elm.lang.core.psi.elements
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
+import org.elm.ide.icons.ElmIcons
 import org.elm.lang.core.psi.*
 import org.elm.lang.core.psi.ElmTypes.UPPER_CASE_IDENTIFIER
 import org.elm.lang.core.stubs.ElmUnionVariantStub
@@ -25,6 +26,8 @@ class ElmUnionVariant : ElmStubbedNamedElementImpl<ElmUnionVariantStub>, ElmExpo
     constructor(stub: ElmUnionVariantStub, stubType: IStubElementType<*, *>) :
             super(stub, stubType, IdentifierCase.UPPER)
 
+    override fun getIcon(flags: Int) =
+        ElmIcons.UNION_VARIANT
 
     /** the variant name */
     val upperCaseIdentifier: PsiElement
