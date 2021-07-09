@@ -70,6 +70,7 @@ class ElmUnresolvedReferenceInspection : ElmLocalInspection() {
             if (qualifierContext != null) {
                 fixes += AddQualifierFix()
             }
+            fixes += MakeDeclarationFromUsageFix()
             val description = "Unresolved reference '${ref.canonicalText}'"
             holder.registerProblem(element, description, LIKE_UNKNOWN_SYMBOL, errorRange, *fixes.toTypedArray())
         }
