@@ -44,6 +44,7 @@ In order for the Elm plugin to take advantage of this feature, the custom locati
    This folder can contain subfolders - all tests anywhere under this folder will be executed.
 
 1. Update `elm.json` and add the value you used for `test-directory` above to the `source-directories` array.
+1. Restart the IDE
 
 As mentioned above, note that this only works for _applications_, not _packages_, i.e. only for projects where `elm.json`
 has a `type` field with a value of `application`.
