@@ -41,6 +41,7 @@ import org.elm.workspace.ElmToolchain.Companion.ELM_JSON
 import org.elm.workspace.commandLineTools.ElmCLI
 import org.elm.workspace.ui.ElmWorkspaceConfigurable
 import org.jdom.Element
+import java.io.FileNotFoundException
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
@@ -128,10 +129,13 @@ class ElmWorkspaceService(
 
 
     fun useToolchain(toolchain: ElmToolchain) {
+        if (settings.toolchain == toolchain) {
+            return
+        }
         modifySettings {
-            it.copy(elmCompilerPath = toolchain.elmCompilerPath.toString(),
-                    elmFormatPath = toolchain.elmFormatPath.toString(),
-                    elmTestPath = toolchain.elmTestPath.toString(),
+            it.copy(elmCompilerPath = toolchain.elmCompilerPath?.toString() ?: "",
+                    elmFormatPath = toolchain.elmFormatPath?.toString() ?: "",
+                    elmTestPath = toolchain.elmTestPath?.toString() ?: "",
                     isElmFormatOnSaveEnabled = toolchain.isElmFormatOnSaveEnabled)
         }
     }
@@ -234,7 +238,14 @@ class ElmWorkspaceService(
 
         // Re-write the `elm.json` with sane source-directories
         val mapper = ObjectMapper()
-        val dto = mapper.readTree(manifestPath.toFile()) as ObjectNode
+        val dto = try {
+            mapper.readTree(manifestPath.toFile()) as ObjectNode
+        } catch (e: FileNotFoundException) {
+            log.error("Failed to install deps: the elm.json file does not exist", e)
+            FileUtil.delete(dir)
+            return false
+        }
+
         if (dto.has("source-directories")) {
             dto.putArray("source-directories").add("src")
         }
@@ -454,14 +465,14 @@ class ElmWorkspaceService(
                     if (rawProjects.isNotEmpty()) {
                         // Exclude `elm-stuff` directories to prevent pollution of open-by-filename, etc.
                         ApplicationManager.getApplication().invokeLater {
-                            for (module in intellijProject.modules.asSequence()) {
-                                ModuleRootModificationUtil.updateModel(module) { model ->
-                                    model.contentEntries.forEach {
-                                        if ("elm-stuff" !in it.excludePatterns)
-                                            it.addExcludePattern("elm-stuff")
-                                    }
-                                }
-                            }
+                            // for (module in intellijProject.modules.asSequence()) {
+                            //     ModuleRootModificationUtil.updateModel(module) { model ->
+                            //         model.contentEntries.forEach {
+                            //             if ("elm-stuff" !in it.excludePatterns)
+                            //                 it.addExcludePattern("elm-stuff")
+                            //         }
+                            //     }
+                            // }
                         }
                     }
 

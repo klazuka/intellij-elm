@@ -96,7 +96,7 @@ class ElmBuildAction : AnAction() {
 
         when {
             isUnitTestMode -> postErrors()
-            else -> ToolWindowManager.getInstance(project).getToolWindow("Elm Compiler").show {
+            else -> ToolWindowManager.getInstance(project).getToolWindow("Elm Compiler")?.show {
                 postErrors()
             }
         }
@@ -115,7 +115,7 @@ class ElmBuildAction : AnAction() {
 
     private fun findActiveFile(e: AnActionEvent, project: Project): VirtualFile? =
             e.getData(CommonDataKeys.VIRTUAL_FILE)
-                    ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull { it.fileType == ElmFileType }
+                    ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull { it.fileType is ElmFileType }
 
     private fun showError(project: Project, message: String, includeFixAction: Boolean = false) {
         val actions = if (includeFixAction)

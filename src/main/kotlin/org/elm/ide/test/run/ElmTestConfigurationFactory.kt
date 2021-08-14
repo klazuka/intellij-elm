@@ -10,6 +10,8 @@ class ElmTestConfigurationFactory internal constructor(type: ConfigurationType) 
     override fun createTemplateConfiguration(project: Project) =
             ElmTestRunConfiguration(project, this, "Elm Test")
 
+    override fun getId() = name
+
     override fun getName() = "Elm Test configuration factory"
 
     override fun getIcon() = RUN_ICON

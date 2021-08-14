@@ -9,7 +9,7 @@ import org.elm.lang.core.psi.ElmPsiElement
 
 abstract class ElmLocalInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : PsiElementVisitor() {
-        override fun visitElement(element: PsiElement?) {
+        override fun visitElement(element: PsiElement) {
             super.visitElement(element)
             if (element is ElmPsiElement) {
                 visitElement(element, holder, isOnTheFly)

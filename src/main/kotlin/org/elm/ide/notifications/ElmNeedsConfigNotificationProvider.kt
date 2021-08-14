@@ -43,10 +43,10 @@ class ElmNeedsConfigNotificationProvider(
                     object : ElmWorkspaceService.ElmWorkspaceListener {
                         override fun didUpdate() {
                             log.debug("Workspace did change; invalidating cache and refreshing UI")
-                            synchronized(lock) {
-                                versionCheck = VersionCheck.NotChecked // Elm toolchain may have changed
-                            }
-                            notifications.updateAllNotifications()
+//                            synchronized(lock) {
+//                                versionCheck = VersionCheck.NotChecked // Elm toolchain may have changed
+//                            }
+//                            notifications.updateAllNotifications()
                         }
                     })
         }
@@ -112,7 +112,7 @@ class ElmNeedsConfigNotificationProvider(
             }
             // refresh the UI
             ApplicationManager.getApplication().invokeLater {
-                notifications.updateAllNotifications()
+//                notifications.updateAllNotifications()
             }
         }
     }

@@ -35,7 +35,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.stubs.StubElement
 import com.intellij.testFramework.LoggedErrorProcessor
-import org.apache.log4j.Logger
 import org.elm.lang.ElmTestBase
 import org.elm.lang.core.psi.ElmNamedElement
 import org.elm.lang.core.psi.ElmPsiElement
@@ -72,9 +71,8 @@ class ElmStubAccessTest : ElmTestBase() {
         val parentsByStub: MutableMap<PsiElement, PsiElement> = HashMap()
         try {
             LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {
-                override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {
-                    logger.info(message, t)
-                    throw AssertionError(message)
+                override fun processError(category: String, message: String?, t: Throwable?, details: Array<out String>): Boolean {
+                    return super.processError(category, message, t, details)
                 }
             })
             processStubsWithoutAstAccess<ElmPsiElement> {

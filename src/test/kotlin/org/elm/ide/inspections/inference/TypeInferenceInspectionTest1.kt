@@ -315,7 +315,7 @@ main a = <error descr="Type mismatch.Required: Foo IntFound: Bar">a</error>
     fun `test mismatched value type from parametric record alias`() = checkByText("""
 type alias A a = {x: a, y: ()}
 main : A ()
-main = <error descr="Type mismatch.Required: A ()Found: { x : Float, y : () }Mismatched fields: &nbsp;&nbsp;Field x:&nbsp;&nbsp;&nbsp;&nbsp;Required: ()&nbsp;&nbsp;&nbsp;&nbsp;Found: Float">{x = 1.0, y = ()}</error>
+main = <error descr="Type mismatch.Required: A ()Found: { x : Float, y : () }Mismatched fields:   Field x:    Required: ()    Found: Float">{x = 1.0, y = ()}</error>
 """)
 
     fun `test mismatched value type from record subset`() = checkByText("""

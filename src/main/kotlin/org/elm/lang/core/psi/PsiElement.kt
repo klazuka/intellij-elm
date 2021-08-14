@@ -137,7 +137,7 @@ fun <T : PsiElement> getStubDescendantsOfType(
     if (strict) {
         go(stub.childrenStubs)
     } else {
-        go(listOf(stub))
+        go(listOf(stub).map { it as StubElement<PsiElement> })
     }
 
     return result
@@ -169,7 +169,7 @@ fun <T : PsiElement> getStubDescendantOfType(
     return if (strict) {
         go(stub.childrenStubs)
     } else {
-        go(listOf(stub))
+        go(listOf(stub as StubElement<PsiElement>))
     }
 }
 

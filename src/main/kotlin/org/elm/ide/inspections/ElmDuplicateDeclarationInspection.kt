@@ -7,7 +7,6 @@ import com.intellij.psi.PsiElementVisitor
 import org.elm.lang.core.psi.ElmFile
 import org.elm.lang.core.psi.ElmNameIdentifierOwner
 import org.elm.lang.core.psi.ElmNamedElement
-import org.elm.lang.core.psi.elements.ElmFunctionDeclarationLeft
 import org.elm.lang.core.psi.elements.ElmLetInExpr
 import org.elm.lang.core.resolve.scope.ExpressionScope
 import org.elm.lang.core.resolve.scope.ModuleScope
@@ -18,7 +17,7 @@ import org.elm.lang.core.resolve.scope.ModuleScope
 class ElmDuplicateDeclarationInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
                 when (element) {
                     is ElmFile -> checkFile(element, holder)

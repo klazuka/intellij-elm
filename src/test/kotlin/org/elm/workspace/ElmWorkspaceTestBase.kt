@@ -10,6 +10,7 @@ package org.elm.workspace
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.builders.ModuleFixtureBuilder
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
+import com.intellij.util.ThrowableRunnable
 import org.elm.FileTree
 import org.elm.FileTreeBuilder
 import org.elm.TestProject
@@ -45,12 +46,12 @@ abstract class ElmWorkspaceTestBase : CodeInsightFixtureTestCase<ModuleFixtureBu
     }
 
 
-    override fun runTest() {
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
         if (!toolchain.looksLikeValidToolchain()) {
             System.err.println("SKIP $name: no Elm toolchain found")
             return
         }
-        super.runTest()
+        super.runTestRunnable(testRunnable)
     }
 
 

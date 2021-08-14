@@ -15,7 +15,7 @@ import org.elm.lang.core.resolve.scope.ModuleScope
 
 class ElmImportOptimizer: ImportOptimizer {
 
-    override fun supports(file: PsiFile?) =
+    override fun supports(file: PsiFile) =
             file is ElmFile
 
     override fun processFile(file: PsiFile): Runnable {

@@ -331,7 +331,7 @@
     Note that the range is half-open: [since-build, until-build), but if you use a wildcard in `until`,
     it will be inclusive (i.e. 203.* is inclusive for 2020.3.x)
      -->
-    <idea-version since-build="191.4212.41" until-build="211.*"/>
+    <idea-version since-build="191.4212.41" until-build="212.*"/>
 
 
     <depends>com.intellij.modules.lang</depends>
@@ -342,7 +342,11 @@
         <annotator language="Elm" implementationClass="org.elm.ide.highlight.ElmSyntaxHighlightAnnotator"/>
         <colorSettingsPage implementation="org.elm.ide.color.ElmColorSettingsPage"/>
         <enterHandlerDelegate implementation="org.elm.ide.typing.ElmOnEnterIndentHandler"/>
-        <fileTypeFactory implementation="org.elm.lang.core.ElmFileTypeFactory"/>
+        <fileType name="Elm file"
+                  language="Elm"
+                  extensions="elm"
+                  implementationClass="org.elm.lang.core.ElmFileType"
+                  fieldName="INSTANCE"/>
         <internalFileTemplate name="Elm Module"/>
         <gotoSymbolContributor implementation="org.elm.ide.navigation.ElmGoToSymbolContributor"/>
         <lang.braceMatcher language="Elm" implementationClass="org.elm.ide.ElmPairedBraceMatcher"/>
@@ -374,7 +378,7 @@
         <lang.smartEnterProcessor language="Elm" implementationClass="org.elm.ide.typing.ElmSmartEnterProcessor"/>
         <extendWordSelectionHandler implementation="org.elm.ide.wordSelection.ElmDeclAnnotationSelectionHandler"/>
         <lang.importOptimizer language="Elm" implementationClass="org.elm.ide.refactoring.ElmImportOptimizer"/>
-        <colorProvider language="Elm" implementation="org.elm.ide.color.ElmColorProvider"/>
+        <colorProvider implementation="org.elm.ide.color.ElmColorProvider"/>
         <codeStyleSettingsProvider implementation="org.elm.ide.formatter.settings.ElmCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="org.elm.ide.formatter.settings.ElmLanguageCodeStyleSettingsProvider"/>
 

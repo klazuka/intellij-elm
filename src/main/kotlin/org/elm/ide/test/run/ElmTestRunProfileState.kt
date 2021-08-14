@@ -125,7 +125,7 @@ class ElmTestRunProfileState internal constructor(
                     super.finishTesting()
                 }
 
-                override fun processServiceMessages(text: String, outputType: Key<*>?, visitor: ServiceMessageVisitor): Boolean {
+                override fun processServiceMessages(text: String, outputType: Key<*>, visitor: ServiceMessageVisitor): Boolean {
                     val events = processor.accept(text) ?: return false
                     events.forEach { processEvent(it) }
                     return true

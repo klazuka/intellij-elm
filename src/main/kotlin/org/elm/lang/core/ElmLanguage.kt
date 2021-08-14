@@ -26,10 +26,3 @@ object ElmFileType : LanguageFileType(ElmLanguage) {
     override fun getDescription() =
             "Elm language file"
 }
-
-
-class ElmFileTypeFactory : FileTypeFactory() {
-    override fun createFileTypes(consumer: FileTypeConsumer) {
-        consumer.consume(ElmFileType, ElmFileType.EXTENSION)
-    }
-}

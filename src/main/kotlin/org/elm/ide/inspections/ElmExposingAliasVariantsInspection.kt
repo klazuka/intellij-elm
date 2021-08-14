@@ -14,7 +14,7 @@ import org.elm.lang.core.psi.elements.ElmTypeAliasDeclaration
 class ElmExposingAliasVariantsInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
                 if (element !is ElmExposedType) return
 

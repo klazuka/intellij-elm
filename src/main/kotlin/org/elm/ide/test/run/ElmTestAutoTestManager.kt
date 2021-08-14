@@ -9,6 +9,8 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import org.elm.lang.core.ElmFileType
+import java.util.function.IntConsumer
+import java.util.function.Predicate
 
 @State(
         name = "ElmTestAutoTestManager",
@@ -21,8 +23,8 @@ class ElmTestAutoTestManager internal constructor(
     override fun createWatcher(project: Project) =
             DelayedDocumentWatcher(project,
                     myDelayMillis,
-                    { restartAllAutoTests(it) },
-                    { it.fileType == ElmFileType && FileEditorManager.getInstance(project).isFileOpen(it) }
+                    IntConsumer { restartAllAutoTests(it) },
+                    Predicate { it.fileType == ElmFileType && FileEditorManager.getInstance(project).isFileOpen(it) }
             )
 }
 

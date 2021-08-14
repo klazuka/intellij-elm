@@ -42,7 +42,8 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import junit.framework.AssertionFailedError
 import org.elm.FileTree
 import org.elm.TestProject
@@ -72,7 +73,7 @@ private val log = logger<ElmTestBase>()
  *
  * For "heavier" integration tests, see [org.elm.workspace.ElmWorkspaceTestBase]
  */
-abstract class ElmTestBase : LightPlatformCodeInsightFixtureTestCase(), ElmTestCase {
+abstract class ElmTestBase : BasePlatformTestCase(), ElmTestCase {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = ElmDefaultDescriptor
 
@@ -82,7 +83,7 @@ abstract class ElmTestBase : LightPlatformCodeInsightFixtureTestCase(), ElmTestC
 
     override fun getTestDataPath(): String = "${ElmTestCase.testResourcesPath}/$dataPath"
 
-    override fun runTest() {
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
         val projectDescriptor = projectDescriptor
         val reason = (projectDescriptor as? ElmProjectDescriptorBase)?.skipTestReason
         if (reason != null) {
@@ -90,7 +91,7 @@ abstract class ElmTestBase : LightPlatformCodeInsightFixtureTestCase(), ElmTestC
             return
         }
 
-        super.runTest()
+        super.runTestRunnable(testRunnable)
     }
 
     protected val fileName: String
@@ -114,7 +115,7 @@ abstract class ElmTestBase : LightPlatformCodeInsightFixtureTestCase(), ElmTestC
 
         action()
 
-        val afterDir = getVirtualFileByName("$testDataPath/$after")
+        val afterDir = getVirtualFileByName("$testDataPath/$after")!!
         PlatformTestUtil.assertDirectoriesEqual(afterDir, beforeDir)
     }
 

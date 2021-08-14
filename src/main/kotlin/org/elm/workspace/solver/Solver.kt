@@ -78,7 +78,7 @@ private data class Dep(val name: PkgName, val constraint: Constraint)
 
 private fun Map<PkgName, Constraint>.pick(): Pair<Dep?, Map<PkgName, Constraint>> {
     // Pick a dep/constraint (Elm compiler picks by pkg name in lexicographically ascending order)
-    val dep = minBy { it.key } ?: return (null to this)
+    val dep = minByOrNull { it.key } ?: return (null to this)
     return Dep(dep.key, dep.value) to minus(dep.key)
 }
 

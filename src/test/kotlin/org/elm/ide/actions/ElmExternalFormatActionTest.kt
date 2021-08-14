@@ -7,19 +7,20 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.elm.workspace.ElmWorkspaceTestBase
 import org.intellij.lang.annotations.Language
 
 class ElmExternalFormatActionTest : ElmWorkspaceTestBase() {
 
-    override fun runTest() {
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
         if (toolchain.elmFormatCLI == null) {
             // TODO in the future maybe we should install elm-format in the CI build environment
             System.err.println("SKIP $name: elm-format not found")
             return
         }
-        super.runTest()
+        super.runTestRunnable(testRunnable)
     }
 
 

@@ -51,12 +51,12 @@ abstract class ElmParsingTestCaseBase(@NonNls dataPath: String)
     protected fun hasError(file: PsiFile): Boolean {
         var hasErrors = false
         file.accept(object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 if (element is PsiErrorElement) {
                     hasErrors = true
                     return
                 }
-                element!!.acceptChildren(this)
+                element.acceptChildren(this)
             }
         })
         return hasErrors

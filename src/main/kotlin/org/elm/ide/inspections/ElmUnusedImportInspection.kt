@@ -88,7 +88,7 @@ class ImportVisitor(initialImports: List<ElmImportClause>) : PsiElementVisitor()
         return import !in unusedImports && !import.safeToIgnore
     }
 
-    override fun visitElement(element: PsiElement?) {
+    override fun visitElement(element: PsiElement) {
         super.visitElement(element)
         if (element is ElmReferenceElement && element !is ElmImportClause && element !is ElmExposedItemTag) {
             val reference = element.reference

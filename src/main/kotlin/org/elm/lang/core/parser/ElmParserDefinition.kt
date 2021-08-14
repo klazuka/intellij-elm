@@ -50,8 +50,8 @@ class ElmParserDefinition : ParserDefinition {
     override fun getFileNodeType() =
             ElmFileStub.Type
 
-    override fun createFile(viewProvider: FileViewProvider?) =
-            ElmFile(viewProvider!!)
+    override fun createFile(viewProvider: FileViewProvider) =
+            ElmFile(viewProvider)
 
     override fun spaceExistanceTypeBetweenTokens(left: ASTNode?, right: ASTNode?) =
             MAY

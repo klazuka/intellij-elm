@@ -6,6 +6,7 @@ import org.elm.openapiext.elementFromXmlString
 import org.elm.openapiext.pathAsPath
 import org.elm.openapiext.toXmlString
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 
 class ElmWorkspaceServiceTest : ElmWorkspaceTestBase() {
@@ -252,12 +253,13 @@ class ElmWorkspaceServiceTest : ElmWorkspaceTestBase() {
         // The known-good, serialized state that we must be able to handle
         val projectPath = rootPath.resolve("a").resolve("elm.json")
         val projectPathString = projectPath.toString().replace("\\", "/") // normalize windows paths
+        fun <T : Path?> T.toStringOrEmpty() = this?.toString() ?: ""
         val xml = """
             <state>
               <elmProjects>
                 <project path="$projectPathString" />
               </elmProjects>
-              <settings elmCompilerPath="${toolchain.elmCompilerPath}" elmFormatPath="${toolchain.elmFormatPath}" elmTestPath="${toolchain.elmTestPath}" isElmFormatOnSaveEnabled="true" />
+              <settings elmCompilerPath="${toolchain.elmCompilerPath.toStringOrEmpty()}" elmFormatPath="${toolchain.elmFormatPath.toStringOrEmpty()}" elmTestPath="${toolchain.elmTestPath.toStringOrEmpty()}" isElmFormatOnSaveEnabled="false" />
             </state>
             """.trimIndent()
 
@@ -270,6 +272,7 @@ class ElmWorkspaceServiceTest : ElmWorkspaceTestBase() {
         // ... and serialize the resulting state ...
         val actualXml = workspace.state.toXmlString()
         checkEquals(xml, actualXml)
+//        PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
 
 

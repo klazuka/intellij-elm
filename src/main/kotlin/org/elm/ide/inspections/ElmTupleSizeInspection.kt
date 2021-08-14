@@ -12,7 +12,7 @@ import org.elm.lang.core.psi.elements.ElmTupleExpr
 class ElmTupleSizeInspection : LocalInspectionTool() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
                 if (element !is ElmTupleExpr) return
                 if (element.expressionList.size > 3) {
