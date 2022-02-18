@@ -31,4 +31,17 @@ class ElmFunctionCallExpr(node: ASTNode) : ElmPsiElementImpl(node), ElmExpressio
     val arguments: Sequence<ElmAtomTag>
         get() =
             directChildren.filterIsInstance<ElmAtomTag>().drop(1)
+
+    /** The arguments to the function, but with parenthesized expressions unwrapped */
+    val argumentsWithoutParens: Sequence<ElmExpressionTag>
+        get() =
+            arguments
+                    .map {
+                        if (it is ElmParenthesizedExpr) {
+                            it.expression
+                        } else {
+                            it
+                        }
+                    }
+                    .filterNotNull()
 }

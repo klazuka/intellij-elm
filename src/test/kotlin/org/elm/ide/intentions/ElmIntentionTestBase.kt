@@ -9,7 +9,7 @@ package org.elm.ide.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.util.ui.UIUtil
+import junit.framework.ComparisonFailure
 import org.elm.fileTreeFromText
 import org.elm.lang.ElmTestBase
 import org.intellij.lang.annotations.Language
@@ -17,10 +17,13 @@ import org.intellij.lang.annotations.Language
 
 abstract class ElmIntentionTestBase(val intention: IntentionAction) : ElmTestBase() {
 
-    protected fun doAvailableTest(@Language("Elm") before: String, @Language("Elm") after: String) {
+    protected fun doAvailableTest(@Language("Elm") before: String, @Language("Elm") after: String, expectedIntentionText: String? = null) {
         InlineFile(before).withCaret()
         launchAction()
         myFixture.checkResult(replaceCaretMarker(after))
+        if (expectedIntentionText != null && expectedIntentionText != intention.text) {
+            throw ComparisonFailure("Intention text did not match", expectedIntentionText, intention.text)
+        }
     }
 
     protected fun doAvailableTestWithFileTree(@Language("Elm") fileStructureBefore: String, @Language("Elm") openedFileAfter: String) {
