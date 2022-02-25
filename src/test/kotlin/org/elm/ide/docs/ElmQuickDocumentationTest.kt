@@ -53,7 +53,7 @@ main = foo
       --^
 """,
             """
-<div class='definition'><pre><b>foo</b> : number → ((), <a href="psi_element://String">String</a>, number)
+<div class='definition'><pre><b>foo</b> : number → ( (), <a href="psi_element://String">String</a>, number )
 <b>foo</b> a</pre></div>
 """)
 

@@ -92,7 +92,7 @@ private class TypeRenderer(
     }
 
     private fun renderTuple(ty: TyTuple): String {
-        return ty.types.joinToString(", ", prefix = "(", postfix = ")") { render(it) }
+        return ty.types.joinToString(", ", prefix = "( ", postfix = " )") { render(it) }
     }
 
     private fun AliasInfo.renderedText(): String {
