@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement
 import org.elm.ide.inspections.MissingCaseBranchAdder.Result.MissingVariants
 import org.elm.ide.inspections.MissingCaseBranchAdder.Result.NoMissing
 import org.elm.lang.core.psi.ElmPsiElement
+import org.elm.lang.core.psi.ElmTypes
+import org.elm.lang.core.psi.directChildren
+import org.elm.lang.core.psi.elementType
 import org.elm.lang.core.psi.elements.ElmCaseOfExpr
 
 class ElmIncompletePatternInspection : ElmLocalInspection() {
@@ -21,7 +24,12 @@ class ElmIncompletePatternInspection : ElmLocalInspection() {
             else -> arrayOf(AddWildcardBranchFix())
         }
 
-        holder.registerProblem(element.firstChild, "Case expression is not exhaustive", *fixes)
+        val description = "Case expression is not exhaustive"
+        holder.registerProblem(element.firstChild, description, *fixes)
+        val ofKeyword = element.directChildren.find { it.elementType == ElmTypes.OF }
+        if (ofKeyword !== null) {
+            holder.registerProblem(ofKeyword, description, *fixes)
+        }
     }
 }
 
