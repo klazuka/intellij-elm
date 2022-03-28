@@ -280,4 +280,8 @@ class ElmPsiFactory(private val project: Project) {
                     .descendants.find { it.elementType == elementType }
 
     private fun error(msg: String): Nothing = throw IncorrectOperationException(msg)
+    fun createTopLevelFunction(s: String): ElmValueDeclaration {
+        return createFromText(s)
+                ?: error("Failed to create value declaration")
+    }
 }
