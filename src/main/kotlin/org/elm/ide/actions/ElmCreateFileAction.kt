@@ -75,7 +75,5 @@ class ElmCreateFileAction : CreateFileFromTemplateAction(CAPTION, "", ElmFileTyp
 }
 
 private fun ElmProject.rootDirContaining(dir: PsiDirectory): Path? {
-    val dirPath = dir.virtualFile.pathAsPath
-    return (absoluteSourceDirectories + listOf(testsDirPath))
-            .find { dirPath.startsWith(it) }
+    return rootDirContaining(dir.virtualFile)
 }

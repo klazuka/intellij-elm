@@ -93,6 +93,13 @@ class ElmPsiFactory(private val project: Project) {
                 }
     }
 
+    fun createTypeRef(moduleDecl: String, qid: String) =
+        createFromText("""
+            import $moduleDecl
+            f = $qid
+        """.trimIndent(), VALUE_DECLARATION)
+            ?.descendantOfType<ElmValueExpr>()
+
     fun createLowerCaseIdentifier(text: String): PsiElement =
             createFromText("$text = 42", LOWER_CASE_IDENTIFIER)
                     ?: error("Invalid lower-case identifier: `$text`")

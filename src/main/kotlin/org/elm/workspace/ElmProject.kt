@@ -1,7 +1,9 @@
 package org.elm.workspace
 
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.indexing.LightDirectoryIndex
+import org.elm.openapiext.pathAsPath
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -116,6 +118,12 @@ sealed class ElmProject(
      * Return `true` iff this package is the core package for the current version of Elm.
      */
     open fun isCore(): Boolean = false
+
+    fun rootDirContaining(virtualFile: VirtualFile): Path? {
+        val dirPath = virtualFile.pathAsPath
+        return (absoluteSourceDirectories + listOf(testsDirPath))
+            .find { dirPath.startsWith(it) }
+    }
 }
 
 

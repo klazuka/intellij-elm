@@ -36,6 +36,7 @@
                                       implementationClass="org.elm.ide.structure.ElmStructureViewFactory"/>
         <lang.refactoringSupport language="Elm"
                                  implementationClass="org.elm.ide.refactoring.ElmRefactoringSupportProvider"/>
+        <moveFileHandler implementation="org.elm.ide.refactoring.ElmMoveFileHandler"/>
         <renamePsiElementProcessor implementation="org.elm.ide.refactoring.ElmRenamePsiFileProcessor"/>
         <renamePsiElementProcessor implementation="org.elm.ide.refactoring.ElmRenamePsiElementProcessor"/>
         <lang.syntaxHighlighterFactory language="Elm"
