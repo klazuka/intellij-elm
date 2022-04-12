@@ -54,6 +54,7 @@
         <colorProvider implementation="org.elm.ide.color.ElmColorProvider"/>
         <codeStyleSettingsProvider implementation="org.elm.ide.formatter.settings.ElmCodeStyleSettingsProvider"/>
         <langCodeStyleSettingsProvider implementation="org.elm.ide.formatter.settings.ElmLanguageCodeStyleSettingsProvider"/>
+        <refactoring.moveHandler implementation="org.elm.ide.refactoring.move.ElmMoveTopLevelItemHandler"/>
 
         <!-- New Project for IDEA -->
         <projectTemplatesFactory implementation="org.elm.ide.project.ElmProjectTemplatesFactory" />
