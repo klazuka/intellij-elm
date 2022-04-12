@@ -47,6 +47,8 @@
         <backspaceHandlerDelegate implementation="org.elm.ide.typing.ElmBackspaceHandler"/>
         <codeInsight.parameterInfo language="Elm" implementationClass="org.elm.ide.hints.ElmParameterInfoHandler"/>
         <codeInsight.typeInfo language="Elm" implementationClass="org.elm.ide.hints.ElmExpressionTypeProvider"/>
+        <codeInsight.parameterNameHints language="Elm"
+                                        implementationClass="org.elm.ide.hints.parameter.ElmInlayParameterHintsProvider"/>
         <codeInsight.lineMarkerProvider language="Elm" implementationClass="org.elm.ide.lineMarkers.ElmLineMarkerProvider"/>
         <lang.smartEnterProcessor language="Elm" implementationClass="org.elm.ide.typing.ElmSmartEnterProcessor"/>
         <extendWordSelectionHandler implementation="org.elm.ide.wordSelection.ElmDeclAnnotationSelectionHandler"/>
