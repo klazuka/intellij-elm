@@ -44,8 +44,18 @@ data class ElmToolchain(
     val presentableLocation: String =
             elmCompilerPath?.toString() ?: "unknown location"
 
-    fun looksLikeValidToolchain(): Boolean =
+    /**
+     * Checks the currently configured elm compiler path. If a bare `elm` command is provided we check that it is on the
+     * path.
+     * This performs file I/O.
+     */
+    fun looksLikeValidToolchain(overridePathSearch: Sequence<Path> = emptySequence()): Boolean {
+        return if (elmCompilerPath.toString() == "elm") {
+            ElmSuggest.compilerIsOnPath(overridePathSearch)
+        } else {
             elmCompilerPath != null && Files.isExecutable(elmCompilerPath)
+        }
+    }
 
     /**
      * Attempts to locate Elm tool paths for all tools which are un-configured.

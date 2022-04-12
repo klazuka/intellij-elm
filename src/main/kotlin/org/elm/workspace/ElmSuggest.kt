@@ -25,6 +25,31 @@ object ElmSuggest {
             elmTools.associateWith { programPath(it, project) }
 
     /**
+     * Checks the system's path to verify whether the Elm compiler is present. The search locations are overridable so
+     * this can be tested.
+     *
+     * This performs file I/O in order to determine that the file exists and that it is executable.
+     */
+    fun compilerIsOnPath(searchLocations: Sequence<Path> = emptySequence()): Boolean {
+        val elmNameVariants = executableNamesFor("elm")
+        return searchLocations.ifEmpty {
+            sequenceOf(
+                    suggestionsFromPath(),
+                    suggestionsForMac(),
+                    suggestionsForWindows(),
+                    suggestionsForUnix()
+            ).flatten()
+        }
+                .flatMap { binDir ->
+                    elmNameVariants.map { filename ->
+                        binDir.resolve(filename)
+                    }
+                }
+                .filter { Files.isExecutable(it) }
+                .any()
+    }
+
+    /**
      * Attempt to find the path to [programName].
      */
     private fun programPath(programName: String, project: Project): Path? {
