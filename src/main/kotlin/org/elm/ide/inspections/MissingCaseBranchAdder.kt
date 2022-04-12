@@ -3,10 +3,7 @@ package org.elm.ide.inspections
 import com.intellij.psi.PsiDocumentManager
 import org.elm.lang.core.lookup.ElmLookup
 import org.elm.lang.core.psi.ElmPsiFactory
-import org.elm.lang.core.psi.elements.ElmAnythingPattern
-import org.elm.lang.core.psi.elements.ElmCaseOfExpr
-import org.elm.lang.core.psi.elements.ElmTypeDeclaration
-import org.elm.lang.core.psi.elements.ElmUnionPattern
+import org.elm.lang.core.psi.elements.*
 import org.elm.lang.core.psi.indentStyle
 import org.elm.lang.core.psi.oneLevelOfIndentation
 import org.elm.lang.core.psi.startOffset
@@ -64,16 +61,25 @@ class MissingCaseBranchAdder(val element: ElmCaseOfExpr) {
         var start = elements.first().prevSibling.prevSibling
 
         // Add the virtual open token if there isn't one already
-        if (existingBranches.isNotEmpty()) {
+        if (existingBranches.isNotEmpty() && !element.text.endsWith('\n')) {
             start = start.prevSibling
         }
 
         element.addRange(start, elements.last())
 
+        val parent = element.parent
+
         // Without a value in the last branch, the virtual end token ends up before the trailing
         // whitespace, so we can't grab it from the factory element and need to add it separately.
-        val trailingWs = factory.createElements("\n$existingIndent$indent$indent")
-        element.addRange(trailingWs.first(), trailingWs.last())
+        if (parent is ElmParenthesizedExpr) {
+            val trailingWs = factory.createElements("\n$indent$indent")
+            element.addRange(trailingWs.first(), trailingWs.last())
+
+            parent.replace(factory.createParens(element.text, existingIndent))
+        } else {
+            val trailingWs = factory.createElements("\n$existingIndent$indent$indent")
+            element.addRange(trailingWs.first(), trailingWs.last())
+        }
     }
 
     private fun calcMissingBranches(): Result {
