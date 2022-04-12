@@ -465,7 +465,7 @@ LowerPattern ::= LOWER_CASE_IDENTIFIER
 AnythingPattern ::= UNDERSCORE
 
 RecordPattern ::=
-    LEFT_BRACE <<non_empty_list LowerPattern>> RIGHT_BRACE
+    LEFT_BRACE [<<non_empty_list LowerPattern>>] RIGHT_BRACE
 
 ListPattern ::=
     LEFT_SQUARE_BRACKET [<<non_empty_list Pattern>>] RIGHT_SQUARE_BRACKET
