@@ -1,8 +1,8 @@
 package org.elm.ide.color
 
 import com.github.ajalt.colormath.Color
-import com.github.ajalt.colormath.HSL
-import com.github.ajalt.colormath.RGB
+import com.github.ajalt.colormath.model.HSL
+import com.github.ajalt.colormath.model.RGB
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.util.ui.ColorIcon
 import org.elm.lang.ElmTestBase

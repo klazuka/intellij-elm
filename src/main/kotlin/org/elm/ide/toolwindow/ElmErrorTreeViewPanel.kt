@@ -16,11 +16,7 @@ class ElmErrorTreeViewPanel(project: Project, helpId: String?, createExitAction:
         connectFriendlyMessages(project)
     }
 
-    override fun expandAll() {
-        TreeUtil.expandAll(myTree, Runnable { })
-    }
-
-    fun addErrorMessage(type: Int, text: Array<out String>, file: VirtualFile?, line: Int, column: Int, html: String) {
+    fun addErrorMessage(type: Int, text: Array<String>, file: VirtualFile?, line: Int, column: Int, html: String) {
         super.addMessage(type, text, file, line, column, null)
         messages.add(html)
     }

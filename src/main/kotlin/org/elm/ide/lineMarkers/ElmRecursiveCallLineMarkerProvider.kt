@@ -50,7 +50,8 @@ class ElmRecursiveCallLineMarkerProvider : LineMarkerProvider {
                     ElmIcons.RECURSIVE_CALL,
                     FunctionUtil.constant("Recursive call"),
                     null,
-                    GutterIconRenderer.Alignment.RIGHT)
+                    GutterIconRenderer.Alignment.RIGHT
+            ) { "Recursive call" }
         }
         return null
     }

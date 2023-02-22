@@ -19,7 +19,7 @@ on:
     branches: [main]
   # Trigger the workflow on any pull request
   pull_request:
-
+  workflow_dispatch:
 jobs:
 
   # Run Gradle Wrapper Validation Action to verify the wrapper's checksum
@@ -35,18 +35,18 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       # Validate wrapper
       - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1.0.4
+        uses: gradle/wrapper-validation-action@v1
 
-      # Setup Java 11 environment for the next steps
+      # Setup Java 17 environment for the next steps
       - name: Setup Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: zulu
-          java-version: 11
+          java-version: 17
           cache: gradle
 
       # Set environment variables
@@ -62,11 +62,10 @@ jobs:
           CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
           CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
 
-          echo "::set-output name=version::$VERSION"
-          echo "::set-output name=name::$NAME"
-          echo "::set-output name=changelog::$CHANGELOG"
-          echo "::set-output name=pluginVerifierHomeDir::~/.pluginVerifier"
-
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "pluginVerifierHomeDir=~/.pluginVerifier" >> $GITHUB_OUTPUT
           ./gradlew listProductsReleases # prepare list of IDEs for Plugin Verifier
 
       # Run tests
@@ -76,14 +75,14 @@ jobs:
       # Collect Tests Result of failed tests
       - name: Collect Tests Result
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
 
       # Cache Plugin Verifier IDEs
       - name: Setup Plugin Verifier IDEs Cache
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ${{ steps.properties.outputs.pluginVerifierHomeDir }}/ides
           key: plugin-verifier-${{ hashFiles('build/listProductsReleases.txt') }}
@@ -95,14 +94,14 @@ jobs:
       # Collect Plugin Verifier Result
       - name: Collect Plugin Verifier Result
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pluginVerifier-result
           path: ${{ github.workspace }}/build/reports/pluginVerifier
 
       # Run Qodana inspections
       - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v4.2.3
+        uses: JetBrains/qodana-action@v2022.3.4
 
       # Prepare plugin archive content for creating artifact
       - name: Prepare Plugin Artifact
@@ -113,11 +112,11 @@ jobs:
           FILENAME=`ls *.zip`
           unzip "$FILENAME" -d content
 
-          echo "::set-output name=filename::${FILENAME:0:-4}"
+          echo "filename=${FILENAME:0:-4}" >> $GITHUB_OUTPUT
 
       # Store already-built plugin as an artifact for downloading
       - name: Upload artifact
-        uses: actions/upload-artifact@v2.2.4
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ steps.artifact.outputs.filename }}
           path: ./build/distributions/content/*/*
@@ -133,7 +132,7 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3
 
       # Remove old release drafts by using the curl request for the available releases with draft flag
       - name: Remove Old Release Drafts

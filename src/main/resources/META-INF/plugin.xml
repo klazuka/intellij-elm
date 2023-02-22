@@ -13,7 +13,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="org.elm.lang.core.psi.ElmPsiManager"/>
-
         <additionalTextAttributes scheme="Default" file="colorSchemes/ElmDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/ElmDarcula.xml"/>
         <annotator language="Elm" implementationClass="org.elm.ide.highlight.ElmSyntaxHighlightAnnotator"/>
@@ -207,17 +206,16 @@
 
 
         <!-- STUBS -->
-        <stubElementTypeHolder class="org.elm.lang.core.psi.ElmTypes"/>
+        <stubElementTypeHolder class="org.elm.lang.core.psi.ElmTypes" externalIdPrefix="elm"/>
         <stubIndex implementation="org.elm.lang.core.stubs.index.ElmModulesIndex"/>
         <stubIndex implementation="org.elm.lang.core.stubs.index.ElmNamedElementIndex"/>
 
         <multiHostInjector implementation="org.elm.ide.injection.ElmGlslInjector"/>
 
-        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$Generic"/>
-        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$TopLevel"/>
-        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$Expression"/>
-        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$ValueDecl"/>
-        <defaultLiveTemplatesProvider implementation="org.elm.ide.livetemplates.ElmLiveTemplateProvider"/>
+        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$Generic" contextId="ELM"/>
+        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$TopLevel" contextId="ELM_TOP_LEVEL"/>
+        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$Expression" contextId="ELM_EXPRESSION"/>
+        <liveTemplateContext implementation="org.elm.ide.livetemplates.ElmLiveTemplateContext$ValueDecl" contextId="ELM_VALUE_DECL"/>
 
         <configurationType implementation="org.elm.ide.test.run.ElmTestRunConfigurationType"/>
         <programRunner implementation="org.elm.ide.test.run.ElmTestProgramRunner"/>

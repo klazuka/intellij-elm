@@ -57,4 +57,4 @@ class NamedQuickFixHint(
     }
 }
 
-private fun Project.currentModCount() = PsiModificationTracker.SERVICE.getInstance(this).modificationCount
+private fun Project.currentModCount() = PsiModificationTracker.getInstance(this).modificationCount

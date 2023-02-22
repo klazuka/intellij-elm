@@ -42,6 +42,6 @@ object ElmIcons {
 
 
     private fun getIcon(path: String): Icon {
-        return IconLoader.getIcon("/icons/$path")
+        return IconLoader.getIcon("/icons/$path", javaClass)
     }
 }

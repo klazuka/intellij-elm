@@ -278,8 +278,7 @@ class ElmWorkspaceConfigurable(
             shortcuts.isEmpty() -> "No Shortcut"
             else -> shortcuts.joinToString(", ") { KeymapUtil.getShortcutText(it) }
         }
-        elmFormatShortcutLabel.setHyperlinkText(shortcutStatus + " ", "Change", "")
-        // TODO use: elmFormatShortcutLabel.setTextWithHyperlink("$shortcutStatus ")
+        elmFormatShortcutLabel.setTextWithHyperlink(shortcutStatus)
     }
 
     override fun dispose() {

@@ -271,7 +271,7 @@ abstract class ElmTestBase : LightPlatformCodeInsightFixture4TestCase(), ElmTest
             val stream = ElmTestBase::class.java.classLoader.getResourceAsStream(path)
                     ?: return null
 
-            return StreamUtil.readText(stream, Charsets.UTF_8)
+            return stream.bufferedReader().use { it.readText() }
         }
     }
 
